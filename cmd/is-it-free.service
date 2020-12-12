@@ -1,0 +1,14 @@
+[Unit]
+Description=Is it free
+After=syslog.target network.target
+
+[Service]
+User=%i
+Type=simple
+EnvironmentFile=/etc/sysconfig/is-it-free
+ExecStart=/usr/local/bin/is-it-free
+PrivateTmp=false
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
