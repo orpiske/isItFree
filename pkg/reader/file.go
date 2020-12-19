@@ -2,13 +2,12 @@ package reader
 
 import (
 	"bufio"
-	"io"
 	"log"
 	"os"
 )
 
 // FromLocal read data from file resource
-func FromLocal(fn string) (io.Reader, error) {
+func FromLocal(fn string) ([]byte, error) {
 	log.Print("Reading from file")
 
 	f, err := os.Open(fn)
@@ -18,9 +17,9 @@ func FromLocal(fn string) (io.Reader, error) {
 	}
 
 	defer cleanup(f)
-	r := bufio.NewReader(f)
+	r := bufio.NewScanner(f)
 
-	return r, nil
+	return r.Bytes(), nil
 }
 
 func cleanup(f *os.File) {
