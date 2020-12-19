@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"io"
+	"bytes"
 	"log"
 	"strconv"
 	"strings"
@@ -12,10 +12,10 @@ import (
 )
 
 // ParsePool data
-func ParsePool(r io.Reader) (*report.Report, error) {
+func ParsePool(b []byte) (*report.Report, error) {
 	log.Print("Trying to find pool utilization")
 
-	doc, err := goquery.NewDocumentFromReader(r)
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(b))
 	if err != nil {
 		log.Print("Unable to parse the document: " + err.Error())
 		return nil, err

@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"io"
+	"bytes"
 	"log"
 	"strconv"
 	"strings"
@@ -11,10 +11,10 @@ import (
 )
 
 // ParseGym data
-func ParseGym(r io.Reader) (*report.Report, error) {
+func ParseGym(b []byte) (*report.Report, error) {
 	log.Print("Trying to find gym utilization")
 
-	doc, err := goquery.NewDocumentFromReader(r)
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(b))
 	if err != nil {
 		log.Print("Unable to parse the document: " + err.Error())
 		return nil, err
