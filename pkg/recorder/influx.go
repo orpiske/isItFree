@@ -1,13 +1,16 @@
-package main
+package recorder
 
 import (
 	"context"
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"os"
 	"time"
 )
 
-func record(current Capacity) {
+// InfluxRecorder struct
+type InfluxRecorder struct{}
+
+// Record the given data to the recorder
+func (r *InfluxRecorder) Record(current Capacity) error {
 	bucket := os.Getenv("IIF_BUCKET")
 	if len(bucket) == 0 {
 		bucket = "academia-test"
@@ -32,4 +35,6 @@ func record(current Capacity) {
 	writeAPI.WritePoint(context.Background(), p)
 
 	client.Close()
+
+	return nil
 }
