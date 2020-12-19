@@ -23,7 +23,9 @@ func main() {
 	gymURL := os.Getenv("IIF_GYM_SOURCE_URL")
 	poolURL := os.Getenv("IIF_POOL_SOURCE_URL")
 
-	rec := newRecorder()
+	adapter := os.Getenv("IIF_RECORDER_ADAPTER")
+	rec := recorder.NewRecorder(adapter)
+
 	for {
 
 		// @TODO Can be done inside goroutines
@@ -44,13 +46,4 @@ func main() {
 		log.Print("Sleeping for 10 minutes")
 		time.Sleep(10 * time.Minute)
 	}
-}
-
-func newRecorder() recorder.Recorder {
-	// @TODO Make it better
-	recAdapter := os.Getenv("IIF_RECORDER_ADAPTER")
-	if recAdapter == "influx" {
-		return new(recorder.DiskRecorder)
-	}
-	return new(recorder.DiskRecorder)
 }
