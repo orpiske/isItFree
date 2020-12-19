@@ -1,6 +1,10 @@
 package recorder
 
+import (
+	"github.com/orpiske/isItFree/pkg/report"
+)
+
 // Recorder interface
 type Recorder interface {
-	Record(current Capacity) error
+	Record(r *report.Report)
 }
