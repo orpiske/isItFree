@@ -4,13 +4,16 @@ import (
 	"context"
 	"os"
 	"time"
+
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"github.com/orpiske/isItFree/pkg/report"
 )
 
 // InfluxRecorder struct
 type InfluxRecorder struct{}
 
 // Record the given data to the recorder
-func (r *InfluxRecorder) Record(current Capacity) error {
+func (i InfluxRecorder) Record(r *report.Report) {
 	bucket := os.Getenv("IIF_BUCKET")
 	if len(bucket) == 0 {
 		bucket = "academia-test"
@@ -28,13 +31,11 @@ func (r *InfluxRecorder) Record(current Capacity) error {
 	writeAPI := client.WriteAPIBlocking(org, bucket)
 
 	p := influxdb2.NewPoint("utilization",
-		map[string]string{"area": current.area},
-		map[string]interface{}{"used": current.used, "capacity": current.capacity},
+		map[string]string{"area": r.Area},
+		map[string]interface{}{"used": r.Used, "capacity": r.Capacity},
 		time.Now())
 
 	writeAPI.WritePoint(context.Background(), p)
 
 	client.Close()
-
-	return nil
 }
