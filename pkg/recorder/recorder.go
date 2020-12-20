@@ -13,6 +13,10 @@ type Recorder interface {
 
 // NewRecorder creates a new recorder by adapter
 func NewRecorder(adapter string) Recorder {
+	if len(adapter) == 0 {
+		return new(InfluxRecorder)
+	}
+
 	switch adapter {
 	case "influx":
 		return new(InfluxRecorder)
