@@ -42,7 +42,7 @@ func main() {
 				done <- true
 				return
 			case <-ticker.C:
-				collect(gymURL, rec, poolURL)
+				collect(rec, gymURL, poolURL)
 				log.Print("Waiting for the next update ...")
 			}
 		}
@@ -51,7 +51,7 @@ func main() {
 	<-done
 }
 
-func collect(gymURL string, rec recorder.Recorder, poolURL string) {
+func collect(rec recorder.Recorder, gymURL string, poolURL string) {
 	gdata, err := reader.FromWeb("gym", gymURL)
 	if err == nil {
 		gr, _ := parser.ParseGym(gdata)
