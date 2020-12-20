@@ -52,15 +52,19 @@ func main() {
 }
 
 func collect(gymURL string, rec recorder.Recorder, poolURL string) {
-	gdata, err := reader.FromWeb(gymURL)
+	gdata, err := reader.FromWeb("gym", gymURL)
 	if err == nil {
 		gr, _ := parser.ParseGym(gdata)
 		rec.Record(gr)
+	} else {
+		log.Print(err.Error())
 	}
 
-	pdata, err := reader.FromWeb(poolURL)
+	pdata, err := reader.FromWeb("pool", poolURL)
 	if err == nil {
 		pr, _ := parser.ParsePool(pdata)
 		rec.Record(pr)
+	} else {
+		log.Print(err.Error())
 	}
 }
