@@ -26,7 +26,7 @@ func main() {
 	adapter := os.Getenv("IIF_RECORDER_ADAPTER")
 	rec := recorder.NewRecorder(adapter)
 
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(10 * time.Minute)
 	defer ticker.Stop()
 
 	signals := make(chan os.Signal)
