@@ -3,10 +3,10 @@ package recorder
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/orpiske/isItFree/pkg/report"
 	"io/ioutil"
 	"log"
-
-	"github.com/orpiske/isItFree/pkg/report"
+	"os"
 )
 
 // DiskRecorder struct
@@ -14,7 +14,7 @@ type DiskRecorder struct{}
 
 // Record the given data to the recorder
 func (d DiskRecorder) Record(r *report.Report) {
-	path := fmt.Sprintf("/tmp/isitfree/%s.json", r.Area)
+	path := fmt.Sprintf("%s/isitfree/%s.json", os.TempDir(), r.Area)
 
 	log.Printf("Saving data to %s", path)
 
