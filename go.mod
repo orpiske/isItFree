@@ -1,4 +1,4 @@
-module isItFree/cmd
+module github.com/orpiske/isItFree
 
 go 1.15
 
