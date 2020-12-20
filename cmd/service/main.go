@@ -25,7 +25,14 @@ func main() {
 
 	adapter := os.Getenv("IIF_RECORDER_ADAPTER")
 	rec := recorder.NewRecorder(adapter)
+	// Collect one time at launch to avoid waiting for the ticker
+	collect(rec, gymURL, poolURL)
 
+	// Run subsequent collections using the ticker
+	scheduledCollection(rec, gymURL, poolURL)
+}
+
+func scheduledCollection(rec recorder.Recorder, gymURL string, poolURL string) {
 	ticker := time.NewTicker(10 * time.Minute)
 	defer ticker.Stop()
 
