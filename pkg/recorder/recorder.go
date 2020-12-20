@@ -13,17 +13,13 @@ type Recorder interface {
 
 // NewRecorder creates a new recorder by adapter
 func NewRecorder(adapter string) Recorder {
-	if len(adapter) == 0 {
+	switch adapter {
+	case "disk":
+		return new(DiskRecorder)
+	case "influx":
 		return new(InfluxRecorder)
 	}
 
-	switch adapter {
-	case "influx":
-		return new(InfluxRecorder)
-	case "disk":
-		return new(DiskRecorder)
-	default:
-		log.Printf("Missing recorder adapter.")
-		return nil
-	}
+	log.Printf("Missing recorder adapter: using default (influxdb)")
+	return new(InfluxRecorder)
 }
