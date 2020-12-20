@@ -1,14 +1,14 @@
 package main
 
 import (
-	"log"
-	"os"
-	"time"
-
-	"github.com/orpiske/isItFree/pkg/recorder"
-
 	"github.com/orpiske/isItFree/pkg/parser"
 	"github.com/orpiske/isItFree/pkg/reader"
+	"github.com/orpiske/isItFree/pkg/recorder"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
@@ -26,24 +26,41 @@ func main() {
 	adapter := os.Getenv("IIF_RECORDER_ADAPTER")
 	rec := recorder.NewRecorder(adapter)
 
-	for {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
 
-		// @TODO Can be done inside goroutines
-		gdata, err := reader.FromWeb(gymURL)
-		if err == nil {
-			gr, _ := parser.ParseGym(gdata)
-			rec.Record(gr)
+	signals := make(chan os.Signal)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
+
+	done := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-signals:
+				log.Print("Terminating execution because of signals")
+				done <- true
+				return
+			case <-ticker.C:
+				collect(gymURL, rec, poolURL)
+				log.Print("Waiting for the next update ...")
+			}
 		}
+	}()
 
-		// @TODO Can be done inside goroutines
-		pdata, err := reader.FromWeb(poolURL)
-		if err == nil {
-			pr, _ := parser.ParsePool(pdata)
-			rec.Record(pr)
-		}
+	<-done
+}
 
-		// @FIXME Using sleep is not a good idea
-		log.Print("Sleeping for 10 minutes")
-		time.Sleep(10 * time.Minute)
+func collect(gymURL string, rec recorder.Recorder, poolURL string) {
+	gdata, err := reader.FromWeb(gymURL)
+	if err == nil {
+		gr, _ := parser.ParseGym(gdata)
+		rec.Record(gr)
+	}
+
+	pdata, err := reader.FromWeb(poolURL)
+	if err == nil {
+		pr, _ := parser.ParsePool(pdata)
+		rec.Record(pr)
 	}
 }
