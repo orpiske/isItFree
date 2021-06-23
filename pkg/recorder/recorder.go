@@ -8,7 +8,7 @@ import (
 
 // Recorder interface
 type Recorder interface {
-	Record(r *report.Report)
+	Record(r *report.Report) error
 }
 
 // NewRecorder creates a new recorder by adapter

@@ -59,19 +59,31 @@ func scheduledCollection(rec recorder.Recorder, gymURL string, poolURL string) {
 }
 
 func collect(rec recorder.Recorder, gymURL string, poolURL string) {
-	gdata, err := reader.FromWeb("gym", gymURL)
-	if err == nil {
-		gr, _ := parser.ParseGym(gdata)
-		rec.Record(gr)
+
+	if gdata, readerErr := reader.FromWeb("gym", gymURL) ; readerErr != nil {
+		log.Print(readerErr.Error())
 	} else {
-		log.Print(err.Error())
+		log.Print("Parsing gym data")
+		if gr, parserErr := parser.ParseGym(gdata) ; parserErr != nil {
+			log.Print(readerErr.Error())
+		} else {
+			log.Print("Recording gym data")
+			if recorderErr := rec.Record(gr) ; recorderErr != nil {
+				log.Printf(recorderErr.Error())
+			}
+		}
 	}
 
-	pdata, err := reader.FromWeb("pool", poolURL)
-	if err == nil {
-		pr, _ := parser.ParsePool(pdata)
-		rec.Record(pr)
+	if pdata, readerErr := reader.FromWeb("pool", poolURL) ; readerErr != nil {
+		log.Print(readerErr.Error())
 	} else {
-		log.Print(err.Error())
+		if pr, parserErr := parser.ParsePool(pdata) ; parserErr != nil {
+			log.Print(readerErr.Error())
+		} else {
+			log.Print("Recording pool data")
+			if recorderErr := rec.Record(pr) ; recorderErr != nil {
+				log.Printf(recorderErr.Error())
+			}
+		}
 	}
 }
