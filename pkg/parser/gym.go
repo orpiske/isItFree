@@ -20,14 +20,15 @@ func ParseGym(b []byte) (*report.Report, error) {
 		return nil, err
 	}
 
-	report := &report.Report{}
+	reports := make([]report.Report, 3)
+
+	current := 0
 
 	doc.Find(".s-box").Each(func(i int, s *goquery.Selection) {
-
 		s.Find(".s-box__body__content").Find("h3").Each(func(i int, s *goquery.Selection) {
-			report.Area = strings.TrimSpace(s.Text())
+			reports[current].Area = strings.TrimSpace(s.Text())
 
-			log.Printf("Area: %s\n", report.Area)
+			log.Printf("Area: %s\n", reports[current].Area)
 		})
 
 		s.Find("span").Each(func(i int, s *goquery.Selection) {
@@ -40,13 +41,20 @@ func ParseGym(b []byte) (*report.Report, error) {
 			txtUsed := strings.TrimSpace(strings.Split(txtCapacityMax, "/")[0])
 			txtCapacity := strings.TrimSpace(strings.Split(txtCapacityMax, "/")[1])
 
-			report.Used, _ = strconv.ParseInt(txtUsed, 10, 8)
-			report.Capacity, _ = strconv.ParseInt(txtCapacity, 10, 8)
+			reports[current].Used, _ = strconv.ParseInt(txtUsed, 10, 8)
+			reports[current].Capacity, _ = strconv.ParseInt(txtCapacity, 10, 8)
 		})
 
-		log.Printf("Used: %d\n", report.Used)
-		log.Printf("Capacity: %d\n", report.Capacity)
+		log.Printf("Used: %d\n", reports[current].Used)
+		log.Printf("Capacity: %d\n", reports[current].Capacity)
+		current++
 	})
 
-	return report, nil
+	for i := 0 ; i < len(reports); i++ {
+		if reports[i].Area == "Posilovna" {
+			return &reports[i], nil
+		}
+	}
+
+	return nil, nil
 }
